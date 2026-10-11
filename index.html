@@ -278,6 +278,29 @@
 
   .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease}
   .reveal.in{opacity:1; transform:none}
+
+  /* contact modal */
+  .modal{position:fixed; inset:0; z-index:100; display:none}
+  .modal.open{display:grid; place-items:center}
+  .modal-backdrop{position:absolute; inset:0; background:rgba(5,8,15,.62); backdrop-filter:blur(3px)}
+  .modal-card{
+    position:relative; z-index:1; background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--r); padding:clamp(28px,4vw,38px); width:min(460px, calc(100vw - 40px));
+    box-shadow:0 30px 80px -30px rgba(0,0,0,.55); animation:pop .18s ease;
+  }
+  @keyframes pop{from{opacity:0; transform:translateY(8px) scale(.98)} to{opacity:1; transform:none}}
+  @media (prefers-reduced-motion:reduce){.modal-card{animation:none}}
+  .modal-x{position:absolute; top:14px; right:14px; width:32px; height:32px; border:0; background:transparent; color:var(--muted); font-size:22px; line-height:1; cursor:pointer; border-radius:8px}
+  .modal-x:hover{color:var(--ink); background:var(--surface-2)}
+  .modal-card h3{font-size:24px; margin-top:12px}
+  .modal-card .m-sub{margin-top:12px; color:var(--ink-soft); font-size:15px}
+  .modal-email{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:22px; padding:13px 15px; border:1px solid var(--line); border-radius:var(--r-sm); background:var(--surface-2)}
+  .modal-email .addr{font-family:var(--f-mono); font-size:15px; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .me-copy{flex:0 0 auto; border:1px solid var(--line-strong); background:var(--surface); color:var(--ink); font-family:var(--f-sans); font-weight:600; font-size:13px; padding:8px 14px; border-radius:7px; cursor:pointer; transition:all .15s}
+  .me-copy:hover{border-color:var(--ink)}
+  .me-copy.done{color:var(--good); border-color:var(--good)}
+  .modal-actions{margin-top:18px; display:flex; gap:12px; flex-wrap:wrap}
+  .modal-actions .btn{flex:1; justify-content:center}
 </style>
 </head>
 <body>
@@ -297,7 +320,7 @@
       <button class="theme-toggle" id="themeBtn" aria-label="Toggle color theme" title="Toggle theme">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
       </button>
-      <a class="btn btn-primary" href="#contact">Book a demo <span class="arrow" aria-hidden="true">&rarr;</span></a>
+      <a class="btn btn-primary js-contact" href="#contact">Book a demo <span class="arrow" aria-hidden="true">&rarr;</span></a>
     </div>
   </div>
 </header>
@@ -315,7 +338,7 @@
       <h1>The financial environment for running your&nbsp;company.</h1>
       <p class="lede">Basic Point is a white-label platform that brings financial modeling, budgeting and management accounts into one connected workspace, so your plan, your budget and your actuals finally agree.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#contact">Book a demo <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="btn btn-primary js-contact" href="#contact">Book a demo <span class="arrow" aria-hidden="true">&rarr;</span></a>
         <a class="btn btn-ghost" href="#products">Explore the products</a>
       </div>
       <p class="hero-note"><span class="dot"></span> Finance is the basic point of every decision. We hold every number to the basis point.</p>
@@ -557,15 +580,33 @@
       <h2 style="margin-top:14px">See Basic Point on your numbers.</h2>
       <p>Book a demo and we will walk you through modeling, budgeting and management accounts on a workspace set up for your company.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary js-mail" data-subject="Basic Point demo request" href="#contact">Book a demo <span class="arrow" aria-hidden="true">&rarr;</span></a>
-        <a class="btn btn-ghost js-mail" data-subject="Question for Basic Point" href="#contact">Talk to the team</a>
+        <a class="btn btn-primary js-contact" href="#contact">Book a demo <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="btn btn-ghost js-contact" href="#contact">Talk to the team</a>
       </div>
-      <p style="margin-top:20px; font-size:14px; color:var(--muted)">Or write to <a class="js-mail" data-show-email href="#contact" style="color:var(--accent); font-weight:500">info&#8203;@&#8203;basicpoint.app</a></p>
+      <p style="margin-top:20px; font-size:14px; color:var(--muted)">Or write to <a class="js-mail js-contact" data-show-email href="#contact" style="color:var(--accent); font-weight:500">info&#8203;@&#8203;basicpoint.app</a></p>
     </div>
   </div>
 </section>
 
 </main>
+
+<!-- CONTACT MODAL -->
+<div class="modal" id="contactModal" aria-hidden="true">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+    <button class="modal-x" data-close aria-label="Close">&times;</button>
+    <span class="eyebrow">Get in touch</span>
+    <h3 id="cmTitle">Book a demo</h3>
+    <p class="m-sub">Email us and we will set up Basic Point on your numbers. We reply within one business day.</p>
+    <div class="modal-email">
+      <span class="addr" id="cmEmail">info&#8203;@&#8203;basicpoint.app</span>
+      <button class="me-copy" id="cmCopy" type="button">Copy</button>
+    </div>
+    <div class="modal-actions">
+      <a class="btn btn-primary js-mail" data-subject="Basic Point demo request" href="#">Open email app <span class="arrow" aria-hidden="true">&rarr;</span></a>
+    </div>
+  </div>
+</div>
 
 <!-- FOOTER -->
 <footer>
@@ -589,7 +630,7 @@
       </div>
       <div class="foot-col">
         <h4>Contact</h4>
-        <a class="js-mail" data-show-email href="#contact">info&#8203;@&#8203;basicpoint.app</a>
+        <a class="js-mail js-contact" data-show-email href="#contact">info&#8203;@&#8203;basicpoint.app</a>
         <a href="https://basicpoint.app">basicpoint.app</a>
       </div>
     </div>
@@ -632,6 +673,31 @@
       el.setAttribute('href', 'mailto:' + addr + (s ? ('?subject=' + encodeURIComponent(s)) : ''));
       if(el.hasAttribute('data-show-email')) el.textContent = addr;
     });
+
+    // contact modal
+    var modal = document.getElementById('contactModal');
+    var emailEl = document.getElementById('cmEmail');
+    var copyBtn = document.getElementById('cmCopy');
+    if(emailEl) emailEl.textContent = addr;
+    var lastFocus = null;
+    function openModal(e){ if(e) e.preventDefault(); lastFocus = document.activeElement; modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); if(copyBtn) copyBtn.focus(); }
+    function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); if(lastFocus) lastFocus.focus(); }
+    document.querySelectorAll('.js-contact').forEach(function(el){ el.addEventListener('click', openModal); });
+    modal.querySelectorAll('[data-close]').forEach(function(el){ el.addEventListener('click', closeModal); });
+    document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+    if(copyBtn){
+      copyBtn.addEventListener('click', function(){
+        var done = function(){ copyBtn.textContent = 'Copied'; copyBtn.classList.add('done'); setTimeout(function(){ copyBtn.textContent = 'Copy'; copyBtn.classList.remove('done'); }, 1800); };
+        if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(addr).then(done).catch(function(){ fallbackCopy(addr); done(); }); }
+        else { fallbackCopy(addr); done(); }
+      });
+    }
+    function fallbackCopy(text){
+      var ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); }catch(e){}
+      document.body.removeChild(ta);
+    }
   })();
   (function(){
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
