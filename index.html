@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Basic Point — The financial environment for running a company</title>
+<meta name="description" content="Basic Point is the financial operating environment for modern companies: a modeling engine, a budgeting system, and management accounts — in one disciplined platform." />
+<meta name="theme-color" content="#0B1220" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Basic Point — The financial environment for running a company" />
+<meta property="og:description" content="Model, budget, and close — in one disciplined platform. Precision to the basis point." />
+<meta property="og:url" content="https://basicpoint.app" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230B1220'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='15' font-weight='700' fill='%234A74FF' text-anchor='middle'%3Ebp%3C/text%3E%3C/svg%3E" />
+
+<style>
+  :root{
+    --bg:#FBFBFD; --surface:#FFFFFF; --surface-2:#F3F5F8;
+    --ink:#0B1220; --ink-soft:#394151; --muted:#6B7483;
+    --line:#E4E8EF; --line-strong:#D2D8E2;
+    --accent:#1E46E5; --accent-soft:#E8ECFE; --on-accent:#FFFFFF;
+    --good:#0E8A5F; --warn:#B45309;
+    --maxw:1200px; --gutter:clamp(20px,5vw,64px);
+    --r:14px; --r-sm:9px;
+    --f-sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#070A12; --surface:#0C111C; --surface-2:#121826;
+      --ink:#EEF1F6; --ink-soft:#B7BFCD; --muted:#828B9D;
+      --line:#1C2433; --line-strong:#283142;
+      --accent:#4A74FF; --accent-soft:#141D36; --on-accent:#0A0E18;
+      --good:#2FBE86; --warn:#E8923A;
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#FBFBFD; --surface:#FFFFFF; --surface-2:#F3F5F8;
+    --ink:#0B1220; --ink-soft:#394151; --muted:#6B7483;
+    --line:#E4E8EF; --line-strong:#D2D8E2;
+    --accent:#1E46E5; --accent-soft:#E8ECFE; --on-accent:#FFFFFF;
+    --good:#0E8A5F; --warn:#B45309;
+  }
+  :root[data-theme="dark"]{
+    --bg:#070A12; --surface:#0C111C; --surface-2:#121826;
+    --ink:#EEF1F6; --ink-soft:#B7BFCD; --muted:#828B9D;
+    --line:#1C2433; --line-strong:#283142;
+    --accent:#4A74FF; --accent-soft:#141D36; --on-accent:#0A0E18;
+    --good:#2FBE86; --warn:#E8923A;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--f-sans); font-size:17px; line-height:1.6;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+  h1,h2,h3{margin:0; font-weight:600; letter-spacing:-.02em; text-wrap:balance; line-height:1.08}
+  p{margin:0}
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 var(--gutter)}
+  .mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+  .eyebrow{
+    font-family:var(--f-mono); font-size:12px; font-weight:500;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--muted);
+  }
+  .accent{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:4px}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex; align-items:center; gap:9px; cursor:pointer;
+    font-family:var(--f-sans); font-size:15px; font-weight:600;
+    padding:12px 20px; border-radius:var(--r-sm); border:1px solid transparent;
+    transition:transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--accent); color:var(--on-accent)}
+  .btn-primary:hover{background:color-mix(in srgb,var(--accent) 86%, #000)}
+  .btn-ghost{background:transparent; color:var(--ink); border-color:var(--line-strong)}
+  .btn-ghost:hover{border-color:var(--ink); background:var(--surface-2)}
+  .btn .arrow{transition:transform .2s ease}
+  .btn:hover .arrow{transform:translateX(3px)}
+
+  /* ---------- nav ---------- */
+  header.nav{
+    position:sticky; top:0; z-index:50;
+    background:color-mix(in srgb,var(--bg) 82%, transparent);
+    backdrop-filter:saturate(180%) blur(14px);
+    border-bottom:1px solid transparent; transition:border-color .2s ease;
+  }
+  header.nav.scrolled{border-bottom-color:var(--line)}
+  .nav-inner{display:flex; align-items:center; justify-content:space-between; height:68px}
+  .brand{display:flex; align-items:center; gap:11px; font-weight:600; letter-spacing:-.01em; font-size:18px}
+  .brand .mark{
+    width:30px; height:30px; border-radius:8px; background:var(--ink); color:var(--bg);
+    display:grid; place-items:center; font-family:var(--f-mono); font-weight:600; font-size:14px;
+    letter-spacing:-.02em;
+  }
+  :root[data-theme="dark"] .brand .mark,
+  .brand .mark{color:var(--accent)}
+  .nav-links{display:flex; gap:30px; align-items:center}
+  .nav-links a{font-size:15px; color:var(--ink-soft); transition:color .15s}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-cta{display:flex; align-items:center; gap:12px}
+  .theme-toggle{
+    width:38px; height:38px; display:grid; place-items:center; cursor:pointer;
+    border:1px solid var(--line-strong); border-radius:var(--r-sm); background:transparent;
+    color:var(--ink-soft);
+  }
+  .theme-toggle:hover{color:var(--ink); border-color:var(--ink)}
+  @media(max-width:860px){.nav-links{display:none} .nav-cta .btn-text{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{padding:clamp(56px,9vw,104px) 0 clamp(40px,6vw,72px); position:relative; overflow:hidden}
+  .hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:clamp(32px,5vw,64px); align-items:center}
+  @media(max-width:980px){.hero-grid{grid-template-columns:1fr; gap:44px}}
+  .hero h1{font-size:clamp(38px,5.6vw,62px); letter-spacing:-.03em}
+  .hero .lede{margin-top:22px; font-size:clamp(17px,1.4vw,20px); color:var(--ink-soft); max-width:36ch}
+  .hero-actions{margin-top:34px; display:flex; gap:14px; flex-wrap:wrap}
+  .hero-note{margin-top:22px; font-size:13px; color:var(--muted); display:flex; align-items:center; gap:10px}
+  .hero-note .dot{width:7px; height:7px; border-radius:50%; background:var(--good)}
+
+  .tag-row{display:flex; gap:10px; align-items:center; margin-bottom:26px; flex-wrap:wrap}
+  .pill{
+    font-family:var(--f-mono); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-soft); padding:6px 11px; border-radius:100px;
+    border:1px solid color-mix(in srgb,var(--accent) 22%, transparent);
+  }
+
+  /* ---------- instrument panel (hero visual) ---------- */
+  .panel{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+    box-shadow:0 1px 0 var(--line), 0 24px 50px -30px rgba(11,18,32,.35);
+    overflow:hidden;
+  }
+  .panel-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 18px; border-bottom:1px solid var(--line); background:var(--surface-2);
+  }
+  .panel-head .title{font-family:var(--f-mono); font-size:12.5px; letter-spacing:.06em; color:var(--ink-soft); text-transform:uppercase}
+  .panel-head .status{font-family:var(--f-mono); font-size:11.5px; color:var(--good); display:flex; align-items:center; gap:7px}
+  .panel-head .status .dot{width:6px; height:6px; border-radius:50%; background:var(--good); box-shadow:0 0 0 3px color-mix(in srgb,var(--good) 20%, transparent)}
+  .panel-body{padding:6px 0}
+  .led-row{
+    display:grid; grid-template-columns:1.6fr 1fr 1fr .7fr; gap:12px; align-items:center;
+    padding:12px 18px; border-bottom:1px solid var(--line); font-size:14px;
+  }
+  .led-row:last-child{border-bottom:0}
+  .led-row .lbl{color:var(--ink-soft)}
+  .led-row .num{font-family:var(--f-mono); font-variant-numeric:tabular-nums; text-align:right; color:var(--ink)}
+  .led-row .delta{font-family:var(--f-mono); font-size:12.5px; text-align:right}
+  .delta.up{color:var(--good)} .delta.down{color:var(--warn)}
+  .led-row.head{background:transparent; border-bottom:1px solid var(--line-strong)}
+  .led-row.head span{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:right}
+  .led-row.head span:first-child{text-align:left}
+  .led-row.total{background:var(--surface-2); font-weight:600}
+  .led-row.total .lbl{color:var(--ink); font-weight:600}
+  .spark{height:26px; width:100%}
+  .spark path.line{fill:none; stroke:var(--accent); stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+  .spark path.fill{fill:color-mix(in srgb,var(--accent) 12%, transparent); stroke:none}
+  .panel-foot{display:flex; justify-content:space-between; align-items:center; padding:12px 18px; border-top:1px solid var(--line); background:var(--surface-2)}
+  .panel-foot .k{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+  .panel-foot .v{font-family:var(--f-mono); font-size:13px; color:var(--ink); font-weight:500}
+
+  /* ---------- logos / trust ---------- */
+  .trust{padding:30px 0 10px}
+  .trust p{text-align:center; font-family:var(--f-mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:22px}
+  .trust-row{display:flex; justify-content:center; gap:clamp(22px,5vw,60px); flex-wrap:wrap; align-items:center; opacity:.72}
+  .trust-row span{font-weight:600; font-size:18px; letter-spacing:-.01em; color:var(--ink-soft)}
+
+  /* ---------- section shell ---------- */
+  section{padding:clamp(60px,9vw,108px) 0}
+  .sec-head{max-width:62ch; margin-bottom:clamp(36px,5vw,56px)}
+  .sec-head h2{font-size:clamp(28px,3.6vw,42px); margin-top:14px}
+  .sec-head p{margin-top:18px; font-size:18px; color:var(--ink-soft)}
+  .divider{height:1px; background:var(--line); border:0; margin:0}
+
+  /* ---------- product triptych ---------- */
+  .modules{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden}
+  @media(max-width:900px){.modules{grid-template-columns:1fr}}
+  .module{background:var(--surface); padding:clamp(26px,3vw,38px); display:flex; flex-direction:column; min-height:290px; position:relative; transition:background .2s ease}
+  .module:hover{background:var(--surface-2)}
+  .module .idx{font-family:var(--f-mono); font-size:12px; color:var(--muted); letter-spacing:.1em}
+  .module .ic{margin:20px 0 18px; color:var(--accent)}
+  .module h3{font-size:22px; letter-spacing:-.02em}
+  .module p{margin-top:12px; color:var(--ink-soft); font-size:15.5px; flex-grow:1}
+  .module ul{list-style:none; padding:0; margin:18px 0 0; display:flex; flex-direction:column; gap:9px}
+  .module li{font-family:var(--f-mono); font-size:12.5px; color:var(--muted); display:flex; gap:9px; align-items:center}
+  .module li::before{content:""; width:5px; height:5px; background:var(--accent); border-radius:1px; flex:0 0 auto}
+
+  /* ---------- feature split rows ---------- */
+  .feature{display:grid; grid-template-columns:1fr 1fr; gap:clamp(36px,6vw,80px); align-items:center}
+  .feature + .feature{margin-top:clamp(56px,8vw,96px)}
+  .feature.flip .f-media{order:-1}
+  @media(max-width:900px){.feature{grid-template-columns:1fr; gap:34px} .feature.flip .f-media{order:0}}
+  .f-copy h3{font-size:clamp(24px,2.8vw,32px); margin-top:16px}
+  .f-copy p{margin-top:16px; color:var(--ink-soft); font-size:16.5px}
+  .f-list{list-style:none; padding:0; margin:24px 0 0; display:flex; flex-direction:column; gap:14px}
+  .f-list li{display:flex; gap:12px; font-size:15px; color:var(--ink-soft)}
+  .f-list svg{flex:0 0 auto; margin-top:3px; color:var(--accent)}
+
+  .f-media{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:0; overflow:hidden; box-shadow:0 20px 44px -30px rgba(11,18,32,.3)}
+  .mini-head{display:flex; align-items:center; gap:7px; padding:12px 16px; border-bottom:1px solid var(--line); background:var(--surface-2)}
+  .mini-head .d{width:8px; height:8px; border-radius:50%; background:var(--line-strong)}
+  .mini-head .t{margin-left:8px; font-family:var(--f-mono); font-size:11.5px; color:var(--muted); letter-spacing:.05em}
+  .mini-body{padding:20px}
+
+  /* model media: assumptions -> output */
+  .kv{display:grid; grid-template-columns:1fr auto; gap:0; font-size:13.5px}
+  .kv .row{display:contents}
+  .kv .row > div{padding:10px 2px; border-bottom:1px solid var(--line)}
+  .kv .k{color:var(--ink-soft); font-size:13px}
+  .kv .v{font-family:var(--f-mono); text-align:right; font-variant-numeric:tabular-nums}
+  .kv .v.edit{color:var(--accent)}
+  .kv .row.out .k{font-weight:600; color:var(--ink)}
+  .kv .row.out .v{font-weight:600}
+  .kv .row:last-child > div{border-bottom:0}
+
+  /* budget media bars */
+  .bud{display:flex; flex-direction:column; gap:16px}
+  .bud-item .meta{display:flex; justify-content:space-between; font-size:13px; margin-bottom:7px}
+  .bud-item .meta .name{color:var(--ink-soft)}
+  .bud-item .meta .fig{font-family:var(--f-mono); font-variant-numeric:tabular-nums; color:var(--ink)}
+  .bar{height:8px; background:var(--surface-2); border-radius:100px; overflow:hidden; position:relative; border:1px solid var(--line)}
+  .bar i{display:block; height:100%; background:var(--accent); border-radius:100px}
+  .bar i.over{background:var(--warn)}
+
+  /* ---------- stats band ---------- */
+  .band{background:var(--ink); color:var(--bg)}
+  :root[data-theme="dark"] .band, :root:not([data-theme="light"]) .band{color:#EEF1F6}
+  .band .wrap{padding:clamp(52px,7vw,80px) var(--gutter)}
+  .band-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(24px,4vw,40px)}
+  @media(max-width:820px){.band-grid{grid-template-columns:repeat(2,1fr); gap:34px}}
+  .stat .n{font-family:var(--f-mono); font-size:clamp(32px,4vw,46px); font-weight:500; letter-spacing:-.02em; color:#fff}
+  :root[data-theme="dark"] .stat .n{color:#fff}
+  .stat .l{margin-top:10px; font-size:14px; color:rgba(255,255,255,.62); max-width:24ch}
+  .band .eyebrow{color:rgba(255,255,255,.5)}
+  .band h2{color:#fff}
+
+  /* ---------- security ---------- */
+  .sec-cards{display:grid; grid-template-columns:repeat(3,1fr); gap:20px}
+  @media(max-width:820px){.sec-cards{grid-template-columns:1fr}}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:26px}
+  .card .ic{color:var(--accent); margin-bottom:16px}
+  .card h3{font-size:18px}
+  .card p{margin-top:10px; font-size:14.5px; color:var(--ink-soft)}
+
+  /* ---------- cta ---------- */
+  .cta-box{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+    padding:clamp(40px,6vw,72px); text-align:center; position:relative; overflow:hidden;
+  }
+  .cta-box::before{
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0/100% 34px,
+      linear-gradient(90deg,var(--line) 1px, transparent 1px) 0 0/34px 100%;
+    -webkit-mask-image:radial-gradient(ellipse 70% 80% at 50% 0%, #000, transparent 75%);
+    mask-image:radial-gradient(ellipse 70% 80% at 50% 0%, #000, transparent 75%);
+  }
+  .cta-box > *{position:relative}
+  .cta-box h2{font-size:clamp(28px,3.6vw,40px)}
+  .cta-box p{margin:18px auto 0; max-width:52ch; color:var(--ink-soft); font-size:17px}
+  .cta-box .hero-actions{justify-content:center}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line); padding:clamp(48px,6vw,72px) 0 40px; background:var(--surface)}
+  .foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:36px}
+  @media(max-width:820px){.foot-grid{grid-template-columns:1fr 1fr; gap:34px}}
+  .foot-col h4{font-family:var(--f-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:0 0 16px; font-weight:500}
+  .foot-col a{display:block; font-size:14.5px; color:var(--ink-soft); margin-bottom:11px; transition:color .15s}
+  .foot-col a:hover{color:var(--ink)}
+  .foot-brand p{margin-top:16px; font-size:14px; color:var(--muted); max-width:34ch; line-height:1.65}
+  .foot-legal{margin-top:46px; padding-top:26px; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap}
+  .foot-legal p{font-family:var(--f-mono); font-size:12px; color:var(--muted)}
+  .reg{font-family:var(--f-mono); font-size:12px; color:var(--muted); line-height:1.7; margin-top:16px}
+
+  /* reveal */
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="Basic Point home">
+      <span class="mark">bp</span> Basic&nbsp;Point
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#platform">Platform</a>
+      <a href="#model">Modeling</a>
+      <a href="#budget">Budgeting</a>
+      <a href="#accounts">Accounts</a>
+      <a href="#security">Security</a>
+    </nav>
+    <div class="nav-cta">
+      <button class="theme-toggle" id="themeBtn" aria-label="Toggle color theme" title="Toggle theme">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+      </button>
+      <a class="btn btn-ghost btn-text" href="#cta">Sign in</a>
+      <a class="btn btn-primary" href="#cta">Request access <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy reveal">
+      <div class="tag-row">
+        <span class="pill">Finance OS</span>
+        <span class="eyebrow">Model · Budget · Close</span>
+      </div>
+      <h1>The financial environment for running a&nbsp;company.</h1>
+      <p class="lede">One disciplined platform for financial modeling, budgeting and management accounts — so every number ties out, from forecast to actuals.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#cta">Request access <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="#platform">See the platform</a>
+      </div>
+      <p class="hero-note"><span class="dot"></span> Precision to the basis point — forecast and actuals reconciled on one ledger.</p>
+    </div>
+
+    <div class="hero-visual reveal">
+      <div class="panel" role="img" aria-label="Management accounts snapshot showing revenue, gross margin, operating costs and EBITDA with month-over-month deltas">
+        <div class="panel-head">
+          <span class="title">Management Accounts · Sep 2026</span>
+          <span class="status"><span class="dot"></span> Reconciled</span>
+        </div>
+        <div class="panel-body">
+          <div class="led-row head"><span>Line</span><span>Actual</span><span>Budget</span><span>Δ</span></div>
+          <div class="led-row"><span class="lbl">Revenue</span><span class="num">4,218,400</span><span class="num">4,050,000</span><span class="delta up">+4.2%</span></div>
+          <div class="led-row"><span class="lbl">Gross margin</span><span class="num">71.4%</span><span class="num">70.0%</span><span class="delta up">+1.4pp</span></div>
+          <div class="led-row"><span class="lbl">Operating costs</span><span class="num">2,114,900</span><span class="num">2,060,000</span><span class="delta down">+2.7%</span></div>
+          <div class="led-row total"><span class="lbl">EBITDA</span><span class="num">896,100</span><span class="num">775,000</span><span class="delta up">+15.6%</span></div>
+        </div>
+        <div style="padding:14px 18px 6px; border-top:1px solid var(--line)">
+          <div class="eyebrow" style="margin-bottom:10px">Net cash · trailing 12 months</div>
+          <svg class="spark" viewBox="0 0 320 30" preserveAspectRatio="none" aria-hidden="true">
+            <path class="fill" d="M0,22 L26,20 52,21 78,17 104,18 130,14 156,15 182,11 208,12 234,8 260,9 286,5 320,4 L320,30 L0,30 Z"/>
+            <path class="line" d="M0,22 L26,20 52,21 78,17 104,18 130,14 156,15 182,11 208,12 234,8 260,9 286,5 320,4"/>
+          </svg>
+        </div>
+        <div class="panel-foot">
+          <span class="k">Runway</span><span class="v">31.4 months</span>
+          <span class="k">Burn multiple</span><span class="v">0.42×</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TRUST ===================== -->
+<div class="wrap trust">
+  <p>Built for finance teams that close on time</p>
+  <div class="trust-row">
+    <span>Founders</span><span>Controllers</span><span>FP&amp;A</span><span>CFOs</span><span>Boards</span>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- ===================== PLATFORM / MODULES ===================== -->
+<section id="platform">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">The platform</span>
+      <h2>Three disciplines, one source of truth.</h2>
+      <p>Most companies run finance across disconnected spreadsheets. Basic Point unifies the plan, the budget and the ledger — so the forecast you model is the budget you track and the accounts you report.</p>
+    </div>
+
+    <div class="modules reveal">
+      <article class="module">
+        <span class="idx">01 / Plan</span>
+        <div class="ic" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17l5-6 4 4 7-9"/><path d="M3 21h18"/><circle cx="8" cy="11" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="15" r="1.3" fill="currentColor" stroke="none"/><circle cx="19" cy="6" r="1.3" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <h3>Financial modeling</h3>
+        <p>Driver-based three-statement models that stay live. Change an assumption and watch P&amp;L, balance sheet and cash flow recompute instantly.</p>
+        <ul>
+          <li>Driver &amp; scenario engine</li>
+          <li>Cohort &amp; unit economics</li>
+          <li>Instant sensitivity</li>
+        </ul>
+      </article>
+
+      <article class="module">
+        <span class="idx">02 / Commit</span>
+        <div class="ic" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M8 13h5"/><path d="M8 16h8"/></svg>
+        </div>
+        <h3>Budgeting system</h3>
+        <p>Turn the plan into an operating budget with ownership, approvals and version control. Every department commits to numbers it can defend.</p>
+        <ul>
+          <li>Top-down &amp; bottom-up</li>
+          <li>Approvals &amp; audit trail</li>
+          <li>Rolling re-forecasts</li>
+        </ul>
+      </article>
+
+      <article class="module">
+        <span class="idx">03 / Close</span>
+        <div class="ic" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18"/><path d="M5 8l7-5 7 5"/><path d="M5 8v8l7 4 7-4V8"/></svg>
+        </div>
+        <h3>Management accounts</h3>
+        <p>A monthly close that produces board-ready P&amp;L, balance sheet and cash flow — reconciled against budget, down to the line.</p>
+        <ul>
+          <li>IFRS-aligned reporting</li>
+          <li>Budget vs. actual variance</li>
+          <li>Consolidation &amp; FX</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ===================== FEATURE: MODELING ===================== -->
+<section id="model">
+  <div class="wrap">
+    <div class="feature">
+      <div class="f-copy reveal">
+        <span class="eyebrow">01 — Modeling</span>
+        <h3>Models that recompute the moment you change a&nbsp;driver.</h3>
+        <p>Build once on real drivers — pricing, volume, headcount, churn — and let the three statements stay linked. No broken references, no copy-paste between tabs.</p>
+        <ul class="f-list">
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Driver-based P&amp;L, balance sheet and cash flow that always tie out.</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Scenario and sensitivity analysis side by side.</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Cohort, LTV/CAC and runway built in, not bolted on.</li>
+        </ul>
+      </div>
+      <div class="f-media reveal">
+        <div class="mini-head"><span class="d"></span><span class="d"></span><span class="d"></span><span class="t">model.base_case</span></div>
+        <div class="mini-body">
+          <div class="kv">
+            <div class="row"><div class="k">New customers / mo</div><div class="v edit">1,250 ▾</div></div>
+            <div class="row"><div class="k">ARPA (monthly)</div><div class="v edit">€ 148 ▾</div></div>
+            <div class="row"><div class="k">Gross churn</div><div class="v edit">1.8% ▾</div></div>
+            <div class="row out"><div class="k">ARR, exit year</div><div class="v">€ 7.42M</div></div>
+            <div class="row out"><div class="k">Gross margin</div><div class="v">71.4%</div></div>
+            <div class="row out"><div class="k">Cash runway</div><div class="v">31.4 mo</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ===================== FEATURE: BUDGETING ===================== -->
+<section id="budget">
+  <div class="wrap">
+    <div class="feature flip">
+      <div class="f-copy reveal">
+        <span class="eyebrow">02 — Budgeting</span>
+        <h3>A budget every department owns and can&nbsp;defend.</h3>
+        <p>Cascade targets from the plan, collect bottom-up input, and lock a version. Approvals and a full audit trail mean the number on the board deck is the number in the system.</p>
+        <ul class="f-list">
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Department ownership with approval workflows.</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Version control and immutable audit history.</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Rolling re-forecasts without rebuilding the model.</li>
+        </ul>
+      </div>
+      <div class="f-media reveal">
+        <div class="mini-head"><span class="d"></span><span class="d"></span><span class="d"></span><span class="t">budget.fy2026 · spend to date</span></div>
+        <div class="mini-body">
+          <div class="bud">
+            <div class="bud-item"><div class="meta"><span class="name">Engineering</span><span class="fig">62% · € 1.24M</span></div><div class="bar"><i style="width:62%"></i></div></div>
+            <div class="bud-item"><div class="meta"><span class="name">Sales &amp; Marketing</span><span class="fig">78% · € 0.94M</span></div><div class="bar"><i style="width:78%"></i></div></div>
+            <div class="bud-item"><div class="meta"><span class="name">Operations</span><span class="fig">54% · € 0.41M</span></div><div class="bar"><i style="width:54%"></i></div></div>
+            <div class="bud-item"><div class="meta"><span class="name">G&amp;A</span><span class="fig">103% · € 0.52M</span></div><div class="bar"><i class="over" style="width:100%"></i></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ===================== FEATURE: ACCOUNTS ===================== -->
+<section id="accounts">
+  <div class="wrap">
+    <div class="feature">
+      <div class="f-copy reveal">
+        <span class="eyebrow">03 — Management accounts</span>
+        <h3>A monthly close that produces board-ready&nbsp;accounts.</h3>
+        <p>Post actuals, reconcile against budget, and publish a P&amp;L, balance sheet and cash flow your board can trust — consolidated across entities and currencies.</p>
+        <ul class="f-list">
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> IFRS-aligned statements with a clean audit trail.</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Budget-vs-actual variance explained line by line.</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Multi-entity consolidation with automatic FX.</li>
+        </ul>
+      </div>
+      <div class="f-media reveal">
+        <div class="mini-head"><span class="d"></span><span class="d"></span><span class="d"></span><span class="t">close.sep2026 · variance</span></div>
+        <div class="mini-body">
+          <div class="kv">
+            <div class="row"><div class="k">Revenue</div><div class="v">€ 4.22M <span style="color:var(--good)">▲</span></div></div>
+            <div class="row"><div class="k">COGS</div><div class="v">€ 1.21M</div></div>
+            <div class="row"><div class="k">Operating costs</div><div class="v">€ 2.11M <span style="color:var(--warn)">▲</span></div></div>
+            <div class="row out"><div class="k">EBITDA</div><div class="v">€ 0.90M</div></div>
+            <div class="row out"><div class="k">Net cash</div><div class="v">€ 12.6M</div></div>
+            <div class="row"><div class="k">Close status</div><div class="v" style="color:var(--good)">Reconciled</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STATS BAND ===================== -->
+<section class="band">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:44px">
+      <span class="eyebrow">Why Basic Point</span>
+      <h2>Finance that keeps up with the business.</h2>
+    </div>
+    <div class="band-grid reveal">
+      <div class="stat"><div class="n">1</div><div class="l">Source of truth across plan, budget and ledger.</div></div>
+      <div class="stat"><div class="n">3-day</div><div class="l">Target monthly close, from posting to board pack.</div></div>
+      <div class="stat"><div class="n">0.01%</div><div class="l">A basis point — the precision every reconciliation holds to.</div></div>
+      <div class="stat"><div class="n">∞</div><div class="l">Scenarios and re-forecasts without breaking the model.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECURITY ===================== -->
+<section id="security">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Trust &amp; security</span>
+      <h2>Your financials, handled like they&nbsp;matter.</h2>
+      <p>Basic Point is built by a finance-first team under Cyprus and EU jurisdiction, with controls designed for sensitive financial data from day one.</p>
+    </div>
+    <div class="sec-cards reveal">
+      <div class="card">
+        <div class="ic" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Encrypted end to end</h3>
+        <p>Data encrypted in transit and at rest. Granular, role-based access so people see only what they should.</p>
+      </div>
+      <div class="card">
+        <div class="ic" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18Z"/></svg></div>
+        <h3>EU jurisdiction</h3>
+        <p>Operated by a Cyprus-incorporated company under EU data-protection and GDPR obligations.</p>
+      </div>
+      <div class="card">
+        <div class="ic" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v6H4z"/><path d="M4 14h16v6H4z"/><path d="M8 7h.01M8 17h.01"/></svg></div>
+        <h3>Full audit trail</h3>
+        <p>Every assumption, approval and posting is versioned and logged — so you can always show how a number was made.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTA ===================== -->
+<section id="cta">
+  <div class="wrap">
+    <div class="cta-box reveal">
+      <span class="eyebrow">Early access</span>
+      <h2 style="margin-top:14px">Run your company on numbers you trust.</h2>
+      <p>Request access to Basic Point and bring modeling, budgeting and management accounts onto one ledger.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="mailto:hello@basicpoint.app?subject=Basic%20Point%20access%20request">Request access <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="mailto:hello@basicpoint.app?subject=Talk%20to%20Basic%20Point">Talk to the team</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col foot-brand">
+        <a class="brand" href="#top"><span class="mark">bp</span> Basic&nbsp;Point</a>
+        <p>The financial environment for running a company — model, budget and close on one source of truth.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Platform</h4>
+        <a href="#model">Financial modeling</a>
+        <a href="#budget">Budgeting system</a>
+        <a href="#accounts">Management accounts</a>
+        <a href="#security">Security</a>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <a href="#platform">Platform</a>
+        <a href="mailto:hello@basicpoint.app">Contact</a>
+        <a href="#cta">Request access</a>
+      </div>
+      <div class="foot-col">
+        <h4>Contact</h4>
+        <a href="mailto:hello@basicpoint.app">hello@basicpoint.app</a>
+        <a href="https://basicpoint.app">basicpoint.app</a>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <p>© 2026 Basic Point Ltd. All rights reserved.</p>
+      <p>Cyprus · Reg. No. HE 499467</p>
+    </div>
+    <p class="reg">
+      Basic Point Ltd is a private limited company incorporated in the Republic of Cyprus (Registration No. HE 499467).<br />
+      This website is for information purposes and does not constitute financial, accounting or investment advice.
+    </p>
+  </div>
+</footer>
+
+<script>
+  // theme toggle (persisted)
+  (function(){
+    var root = document.documentElement;
+    var saved = null;
+    try{ saved = localStorage.getItem('bp-theme'); }catch(e){}
+    if(saved){ root.setAttribute('data-theme', saved); }
+    var btn = document.getElementById('themeBtn');
+    btn.addEventListener('click', function(){
+      var cur = root.getAttribute('data-theme');
+      if(!cur){ cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light'; }
+      var next = cur === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try{ localStorage.setItem('bp-theme', next); }catch(e){}
+    });
+  })();
+
+  // nav border on scroll
+  (function(){
+    var nav = document.getElementById('nav');
+    var onScroll = function(){ nav.classList.toggle('scrolled', window.scrollY > 8); };
+    onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+  })();
+
+  // scroll reveal
+  (function(){
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var els = document.querySelectorAll('.reveal');
+    if(reduce || !('IntersectionObserver' in window)){ els.forEach(function(e){e.classList.add('in');}); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, {threshold:.12, rootMargin:'0px 0px -40px 0px'});
+    els.forEach(function(e){ io.observe(e); });
+  })();
+</script>
+
+</body>
+</html>
