@@ -492,9 +492,9 @@
     <div class="wl">
       <div class="wl-copy reveal">
         <span class="eyebrow">Your platform, your brand</span>
-        <h2>Delivered as your own environment, not a shared tool.</h2>
-        <p>Basic Point is white-label. Every client runs on a dedicated, branded workspace, with your logo, your company structure and your chart of accounts, not a one-size-fits-all template. Your team and your advisors log in to a cabinet that looks and works like it is yours, because it is.</p>
-        <p>Onboarding and configuration are handled with you, so the platform fits how your company already runs, rather than forcing you to change to fit the software.</p>
+        <h2>Your brand on a proven financial backbone.</h2>
+        <p>Basic Point is white-label. Every client runs on a dedicated workspace under your own logo, domain and colors, so your team and your advisors log in to a cabinet that looks like it is yours.</p>
+        <p>Underneath, it runs on our standardized chart of accounts and reporting forms. You get a professional financial structure and board-ready statements out of the box, not a blank template to design and maintain yourself.</p>
       </div>
       <div class="wl-media reveal" aria-hidden="true">
         <div class="wl-chip"><span class="logo" style="background:#1E46E5">AC</span><span><span class="nm" style="display:block">Acme Capital</span><span class="sub">finance.acmecapital.com</span></span></div>
@@ -516,7 +516,7 @@
       <div class="stat"><div class="n">1</div><div class="l">Source of truth across plan, budget and ledger.</div></div>
       <div class="stat"><div class="n">3-day</div><div class="l">Target monthly close, from posting to board pack.</div></div>
       <div class="stat"><div class="n">0.01%</div><div class="l">One basis point. The precision we hold every number to.</div></div>
-      <div class="stat"><div class="n">1</div><div class="l">White-label workspace, configured around how you run.</div></div>
+      <div class="stat"><div class="n">1</div><div class="l">White-label workspace, your brand on a proven backbone.</div></div>
     </div>
   </div>
 </section>
@@ -557,9 +557,10 @@
       <h2 style="margin-top:14px">See Basic Point on your numbers.</h2>
       <p>Book a demo and we will walk you through modeling, budgeting and management accounts on a workspace set up for your company.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="mailto:info@basicpoint.app?subject=Basic%20Point%20demo%20request">Book a demo <span class="arrow" aria-hidden="true">&rarr;</span></a>
-        <a class="btn btn-ghost" href="mailto:info@basicpoint.app?subject=Question%20for%20Basic%20Point">Talk to the team</a>
+        <a class="btn btn-primary js-mail" data-subject="Basic Point demo request" href="#contact">Book a demo <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="btn btn-ghost js-mail" data-subject="Question for Basic Point" href="#contact">Talk to the team</a>
       </div>
+      <p style="margin-top:20px; font-size:14px; color:var(--muted)">Or write to <a class="js-mail" data-show-email href="#contact" style="color:var(--accent); font-weight:500">info&#8203;@&#8203;basicpoint.app</a></p>
     </div>
   </div>
 </section>
@@ -588,7 +589,7 @@
       </div>
       <div class="foot-col">
         <h4>Contact</h4>
-        <a href="mailto:info@basicpoint.app">info@basicpoint.app</a>
+        <a class="js-mail" data-show-email href="#contact">info&#8203;@&#8203;basicpoint.app</a>
         <a href="https://basicpoint.app">basicpoint.app</a>
       </div>
     </div>
@@ -620,6 +621,17 @@
     var nav = document.getElementById('nav');
     var onScroll = function(){ nav.classList.toggle('scrolled', window.scrollY > 8); };
     onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+  })();
+  (function(){
+    // Build mailto links at runtime so the raw HTML carries no literal address
+    // (keeps it away from scrapers and from Cloudflare email obfuscation, which
+    // would otherwise rewrite the href and can leave the button non-functional).
+    var u = 'info', d = 'basicpoint.app', addr = u + '@' + d;
+    document.querySelectorAll('.js-mail').forEach(function(el){
+      var s = el.getAttribute('data-subject');
+      el.setAttribute('href', 'mailto:' + addr + (s ? ('?subject=' + encodeURIComponent(s)) : ''));
+      if(el.hasAttribute('data-show-email')) el.textContent = addr;
+    });
   })();
   (function(){
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
